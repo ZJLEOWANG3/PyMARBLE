@@ -1,0 +1,173 @@
+# (RamanomeSpec)
+----
+## Project Goal
+This project is focused on the development of analytics for SCRS platform
+
+----
+## COPYING.txt
+The file contains GNU general public license for  permissions of this strong copyleft license
+
+----
+## setup.py
+The setup.py file is the build script for the package. The setup function from setuptools will build the package for upload to PyPI. Setuptools includes info about the package, version numbber, and which other packages are required for users.
+
+----
+## checkVersion.py
+The python file is to check the versions of all imported packages for the setup.py section
+
+----
+## DATA
+- Processed : processed Raman datasets from raw datasets
+    - RamanData_combined_TXT_ZIJIAN2
+    - 
+- molecule\_dict.json : current Raman polymer librai; dict key format : A ; B, where A is abbreviation, B is full name
+- bacterial\_label.txt : bacteria label number ~ genus species
+- average_accuracy.zijian.json : ML training accuracy of selected model
+- 36-strain-changed2.nwk : 16S tree data for 36 strains
+- TEMP : save temporary data
+
+
+
+- OUTPUT : save important necessary datasets like the data in figures
+    - row_colors.npy : numpy file for row_colors to visualize heatmap
+    - genus_to_color.npy : numpy file for consistency of genus colors
+    - HEATMAP : dir for heamap data
+        - Multiple csv files with various filtration condition
+    - Cluster : dir for cluster data
+        - phase_taxonomy
+            - data1 : PCA_cluster.csv
+            - data2 : total_spec.csv
+            - data3 : sep_spec.csv
+            - verbose : verbose.txt
+            - consistency of two methods : Consistency.txt
+    - Merge2.npy : dictionary for script ClusterMerge2.py to customized figure merge; dict["phase_dict", "tax_dict"][phase/tax] = list of figure path
+    - Dictionary : save the three key dictionary files for chmap, tree, clusters
+        - chmap.npy : the original file for chmap
+        - tree.npy : the original file for tree 
+        - cluster.npy : the original file for clusters
+    - Tree\_test : save the data of K-statiscs and p-values
+        - Normed: the tree dataset is normalized
+            - p_value.csv
+            - K_value.csv
+        - Unnormed : the tree dataset is not normalized
+            - p_value.csv
+            - k_value.csv
+    - Stat : dir to save statistical results
+        - Verbose_stat.csv
+        - consistency describe: cons_des.csv
+    - ANOSIM : dir to save ANOSIM input and output
+        - df_nxd.npy : np_nxd+label
+        - ANOSIM_verbose.txt : verbose for ANOSIM
+    - EVR : dir to save the PCA EVR data
+        - EVR.csv : plot the curve
+    
+----
+## FIGURE
+This section is to save figures. Figures are listed below.
+- genus\_color.png : the genus color code for tree
+- HEATMAP : dir to save clustering heatmaps 
+- Cluster : dir to save Sep and Com
+    - Sep : store sepearated figures 
+        - phase_taxonomy
+            - fig1 : PCA_cluster.png
+            - fig2 : total_spec.png
+            - fig3 : sep_spec.png
+    - Com : store combined figures
+        - phase_taxonomy
+            - combined.png
+    - Com2 : store combined figures2 (2 columns)
+        - growth_stage dir
+            - Exp.png, S1.png, S2.png, S3.png
+        - Genus dir
+            - Taxonomy,png
+                       
+- Tree : dir to save 16S & HC phenotyping tree
+- Tree\_test : dir to save the test results
+    - Branch length transform method names for dir
+    - Statistics barplot for OU and trend : TreePair.png
+- Stat : dir to save statistical results
+        - Verbose_stat.png
+- consistency.png: consistency of two clustering methods
+----
+## EXAMPLE
+This section is to show some examples for the project results
+- pipeline.py : standard pipeline for all the figures except for ML training
+- ML\_model.py : to visualize the training accuracy results
+- Tree.py : to establish and visualize a tree either for phenotyping unrooted data or 16S rooted data
+- Cluster.py : to generate the clustering figure and data
+- ClusterMerge.py : to merge figures of seperate cluster figure
+- ClusterMerge2.py : to merge figures based on different conditions like Growth Stage or Genus type. It takes argv (1 - process and save figure path list; )
+- TreePair.py : to visualize the results of R code for 16S-SCRS tree comparison
+- Statistics.py : to perform some customized statistics
+    - Verbose for the PCA-Kmeans Clustering results
+    - Verbose for ANOSIM 
+- consistency.py : to compute the consistency of two algorithms
+- PCA_EVR.py : to compute the PCA components impacts on consistency or Jaccard
+- pipeline.sh : bash script to perform my codes
+
+----
+## Purpose of each script (Python)
+This section introduced the purpose of each script and their related input & output; If works, what results does it show; If not, how to improve it?
+
+- Raman package loading (load.py)
+    - load all package for other packages
+
+- Raman read package (Raman\_read.py)
+    - read txt files to dataframe for downstream analysis
+
+- Raman spectroscopy preprocessing package (Raman\_preprocess.py)
+    - Background subtraction
+    - Smooth
+    - Baseline correction
+    - binning
+    - normalization
+
+- Raman polymer identification package (Raman\_find\_polymer.py)
+    - find single polymer
+    - find multiple polymer
+
+- Raman color label generator package (Raman\_color.py)
+    - Generate customized colors
+    - Generate label and color for microbial taxonomy by Raman analysis
+
+- Raman intra-strain clustering package (Raman\_cluster.py)
+    - Pick clustering algorithm using various metrics based on hard voting
+    - Visualize strains w/ PCA biplot and related average+std+min+max spectra
+
+- Raman figure combination package (Raman\_figmerge.py)
+    - Save figures
+    - Combine figures of intra-strain clustering based on different criterion for the downstream analysis.
+        - one strain under different growth stages; 
+        - one representative strain from each genus in stationary phase 1 with best accuracy; 
+        - all strains under Bacillus genus in stationary phase 1 with best accuracy
+
+- Raman clustering heatmap (Raman\_chmap.py)
+    - Clustering heatmaps for various averaged Raman spectra
+
+- Raman statistical package (Raman\_stat.py)
+    - ANOSIM for comparison of inter-strain and intra-strain
+    - Tukey test for ML accuracy
+    - Jaccard and consistency computation
+
+- Raman tree package (Raman\_tree.py)
+    - Phenotyping tree establishment
+    - 16S tree establishment w/ same label color
+    - Mantel analysis for pairwise distance tree correlation
+
+- Raman molecular library package (Raman\_molecule.py)
+    - Load the molecular dictionary library
+    - Given wavenumber, return molecular name
+
+----
+Purpose of scripts using R markdown
+- Raman\_BlombergK.Rmd 
+    - To calculate Blomberg K statistics for the comparison of two trees (16S and phenotyping trees)
+- Raman\_BLT.Rmd
+    - To perform branch length transformation using various methods, including delta, lambda, OU, rate change, two rate, and exponential rate transformations
+- Test\_Tree.Rmd
+    - To test how the function of rescale of package geiger process the phylogenetic tree data by various branch length transformation methods
+
+
+----
+What is left for this project?
+- Merge figures
