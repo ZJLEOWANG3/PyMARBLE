@@ -110,7 +110,7 @@ This section is to show some examples for the project results
 ## :computer: Python Modules
 ----
 ### :old_key: :exclamation: Input Data Format
-Data is separated by '\t' with shape of n samples x d features. The 1st row represents wavenumbers. 
+Data is separated by ``` '\t' ``` with shape of ```n samples x d features```. The 1st row represents wavenumbers. 
 
 n samples should contain x background spectra in the end. or it can be merged from separate file.
 
