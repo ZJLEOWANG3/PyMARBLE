@@ -108,6 +108,10 @@ This section is to show some examples for the project results
 
 ----
 ## :computer: Python Modules
+----
+### :old_key: :exclamation: Input Data Format
+Data is separated by '\t' with shape of n samples x d features
+The 1st row represents wavenumbers
 
 ----
 ### :beginner: Prepare your SCRS Data
