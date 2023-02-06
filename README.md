@@ -111,7 +111,7 @@ This section is to show some examples for the project results
 
 ----
 ### :beginner: Prepare your Raman data
-- **load.py** : load all modules for other modules
+- **Load.py** : load all modules for other modules
 
 - **Raman_read.py** : read txt files to pandas.dataframe for downstream analysis
 
@@ -120,19 +120,22 @@ This section is to show some examples for the project results
     - [x] Baseline correction
     - [x] Smooth
     - **Optional**
-        - [ ] binning
-        - [ ] normalization
+        - [ ] Binning
+        - [ ] Normalization
 
 ----
 ### :chart_with_upwards_trend: Get your peak & Assign its molecular
-- Raman molecular library package (Raman\_molecule.py)
+- **Raman_find_polymer.py** : find peaks and polymers of interests
+    - :dart: **Targeted Analysis**
+        - find single polymer
+        - find multiple polymer
+    - :kite: **Non-Targeted Analysis**
+        - find all peaks
+        - [ ] Under-development analysis sections
+
+- **Raman_molecule.py** : side module for (wavenumber,molecule) pair
     - Load the molecular dictionary library
     - Given wavenumber, return molecular name
-
-- Raman_find_polymer.py
-    - Raman polymer identification package 
-    - find single polymer
-    - find multiple polymer
 
 ----
 ### :art: Advanced analysis
