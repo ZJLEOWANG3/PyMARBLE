@@ -138,36 +138,29 @@ This section is to show some examples for the project results
     - Given wavenumber, return molecular name
 
 ----
-### :art: Advanced analysis
-
-- Raman intra-strain clustering package (Raman\_cluster.py)
+### :art: Advanced Analysis
+- **Raman_cluster.py** : Intra-strain clustering modules for SCRS
     - Pick clustering algorithm using various metrics based on hard voting
-    - Visualize strains w/ PCA biplot and related average+std+min+max spectra
+    - Visualize strains w/ PCA biplot and related average, std, min, max spectra
 
-- Raman figure combination package (Raman\_figmerge.py)
-    - Save figures
-    - Combine figures of intra-strain clustering based on different criterion for the downstream analysis.
-        - one strain under different growth stages; 
-        - one representative strain from each genus in stationary phase 1 with best accuracy; 
-        - all strains under Bacillus genus in stationary phase 1 with best accuracy
+- **Raman_chmap.py** : Clustering heatmap for SCRS to show differences
+    - Clustering heatmaps for averaged Raman spectra given one baseline standard
 
-- Raman clustering heatmap (Raman\_chmap.py)
-    - Clustering heatmaps for various averaged Raman spectra
-
-- Raman statistical package (Raman\_stat.py)
+- **Raman_stat.py** : Statistical modules for SCRS 
     - ANOSIM for comparison of inter-strain and intra-strain
     - Tukey test for ML accuracy
     - Jaccard and consistency computation
+    - [ ] Underdevelopment
+        - [ ] Chaos coefficients
+        - [ ] Network Analysis from another separate self-developed repository
+        - [ ] Correlation analysis for 2 trees
 
-- Raman tree package (Raman\_tree.py)
+- **Raman_tree.py** : Tree-based analysis modles
     - Phenotyping tree establishment
     - 16S tree establishment w/ same label color
     - Mantel analysis for pairwise distance tree correlation
 
-- Raman_color.py
-    - Generate customized colors
-    - Generate label and color for microbial taxonomy by Raman analysis
-
+- [ ] **Raman_Ranking.py** : Under development; used to conduct feature ranking for SCRS
 ----
 ### :books: Link to other softwares
 Purpose of scripts using R markdown
@@ -178,3 +171,15 @@ Purpose of scripts using R markdown
 - Test\_Tree.Rmd
     - To test how the function of rescale of package geiger process the phylogenetic tree data by various branch length transformation methods
 
+----
+### :gift: Side Modules
+- **Raman_figmerge.py**: figure combination package
+    - Save figures
+    - Combine figures of intra-strain clustering based on different criterion 
+        - one strain under different growth stages; 
+        - one representative strain from each genus in stationary phase 1 with best accuracy; 
+        - all strains under Bacillus genus in stationary phase 1 with best accuracy
+
+- **Raman_color.py** : To align colors for above analysis
+    - Generate customized colors
+    - Generate label and color for microbial taxonomy by Raman analysis
