@@ -5,7 +5,7 @@
 
 from load import *
 
-def find_peak(X,Y,w=(1150,1200),wid=np.arange(1,10)):
+def find_peak(X,Y,w=(1150,1200),wid=np.arange(1,30)):
     """
     find single peak within w tuple
     n x d
