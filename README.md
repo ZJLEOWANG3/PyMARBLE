@@ -105,24 +105,23 @@ This section is to show some examples for the project results
 - pipeline.sh : bash script to perform my codes
 )
 --->
+
 ----
 ## :computer: Python Modules
 
 ----
 ### :beginner: Prepare your Raman data
-- load.py
-    - load all modules for other packages
+- **load.py** : load all modules for other modules
 
-- Raman_read.py
-    - read txt files to dataframe for downstream analysis
+- **Raman_read.py** : read txt files to pandas.dataframe for downstream analysis
 
-- Raman_preprocess.py
-    - Raman spectroscopy preprocessing package
-        - Background subtraction
-        - Smooth
-        - Baseline correction
-        - binning
-        - normalization
+- **Raman_preprocess.py** : Raman spectroscopy preprocessing module
+    - [x] Background subtraction
+    - [x] Baseline correction
+    - [x] Smooth
+    - **Optional**
+        - [ ] binning
+        - [ ] normalization
 
 ----
 ### :chart_with_upwards_trend: Get your peak & Assign its molecular
@@ -167,7 +166,7 @@ This section is to show some examples for the project results
     - Generate label and color for microbial taxonomy by Raman analysis
 
 ----
-### :side Advanced analysis
+### :books: Link to other softwares
 Purpose of scripts using R markdown
 - Raman\_BlombergK.Rmd 
     - To calculate Blomberg K statistics for the comparison of two trees (16S and phenotyping trees)
