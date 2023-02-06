@@ -46,7 +46,9 @@ n samples should contain x background spectra in the end. or it can be merged fr
         - find single polymer
         - find multiple polymer
     - :kite: **Non-Targeted Analysis**
-        - find all peaks
+        - find all peaks using Raman_find_polymer.find_peak with a window of np.arange(1,30) using 
+        [wavelet transform-based methodology](https://academic.oup.com/bioinformatics/article/22/17/2059/274284?login=true)
+        
         - [ ] Under-development analysis sections
 
 - **Raman_molecule.py** : side module for (wavenumber,molecule) pair
@@ -90,7 +92,12 @@ n samples should contain x background spectra in the end. or it can be merged fr
 
 ----
 ### :gift: Side Modules
-- **Raman_figmerge.py**: figure combination package
+- **Raman_plot.py** : SCRS data visualization
+    - plot_line
+    - add_line
+    - [ ] Underdevelopment by incoporating other modules 
+    
+- **Raman_figmerge.py** : figure combination package
     - Save figures
     - Combine figures of intra-strain clustering based on different criterion 
         - one strain under different growth stages; 
