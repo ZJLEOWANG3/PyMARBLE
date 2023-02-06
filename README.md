@@ -120,8 +120,8 @@ This section is to show some examples for the project results
     - [x] Baseline correction
     - [x] Smooth
     - **Optional**
-        - [ ] Binning
-        - [ ] Normalization
+        - [ ] Binning: to align your data based on differnet stepsize
+        - [ ] Normalization: to normalize your data for later feature and AI relevant analysis
 
 ----
 ### :chart_with_upwards_trend: Get your peak & Assign its molecular
@@ -162,14 +162,14 @@ This section is to show some examples for the project results
 
 - [ ] **Raman_Ranking.py** : Under development; used to conduct feature ranking for SCRS
 - [ ] **AI** : Under development; establish common FCNN, CNN, Transformer, Transformer variants for SCRS
+
 ----
-### :books: Link to other softwares
-Purpose of scripts using R markdown
-- Raman\_BlombergK.Rmd 
+### :books: Link to R markdown using specific eco-evolution R packages
+- **Raman_BlombergK.Rmd**
     - To calculate Blomberg K statistics for the comparison of two trees (16S and phenotyping trees)
-- Raman\_BLT.Rmd
+- **Raman_BLT.Rmd**
     - To perform branch length transformation using various methods, including delta, lambda, OU, rate change, two rate, and exponential rate transformations
-- Test\_Tree.Rmd
+- **Test_Tree.Rmd**
     - To test how the function of rescale of package geiger process the phylogenetic tree data by various branch length transformation methods
 
 ----
