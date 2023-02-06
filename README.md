@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 # (RamanomeSpec)
 ----
 ## Project Goal
@@ -168,11 +167,3 @@ Purpose of scripts using R markdown
 - Test\_Tree.Rmd
     - To test how the function of rescale of package geiger process the phylogenetic tree data by various branch length transformation methods
 
-
-----
-What is left for this project?
-- Merge figures
-=======
-# RamanomeSpec
-This is an AI-powered package for Raman data
->>>>>>> 619b1980c62c756803af562dc1101f7b89109e22
