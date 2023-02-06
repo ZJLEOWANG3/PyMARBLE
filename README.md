@@ -15,6 +15,95 @@ The setup.py file is the build script for the package. The setup function from s
 ## :baby: CheckVersion.py
 To check the versions of all imported packages for the setup.py section
 
+----
+## :computer: Python Modules
+----
+### :old_key: :exclamation: Input Data Format
+Data is separated by ``` '\t' ``` with shape of ```n samples x d features```. The 1st row represents wavenumbers. 
+
+n samples should contain x background spectra in the end. or it can be merged from separate file.
+
+![Data](https://github.com/ZJLEOWANG3/RamanomeSpec/blob/b229a0899022aed7831da27871425b9af7df5e91/media/data.format.png)
+
+----
+### :beginner: Prepare your SCRS Data
+- **Load.py** : load all modules for other modules
+
+- **Raman_read.py** : read txt files to pandas.dataframe for downstream analysis
+
+- **Raman_preprocess.py** : Raman spectroscopy preprocessing module
+    - [x] Background subtraction
+    - [x] Baseline correction
+    - [x] Smooth
+    - **Optional**
+        - [ ] Binning: to align your data based on differnet stepsize
+        - [ ] Normalization: to normalize your data for later feature and AI relevant analysis
+
+----
+### :chart_with_upwards_trend: Get your peak & Assign its molecular
+- **Raman_find_polymer.py** : find peaks and polymers of interests
+    - :dart: **Targeted Analysis**
+        - find single polymer
+        - find multiple polymer
+    - :kite: **Non-Targeted Analysis**
+        - find all peaks
+        - [ ] Under-development analysis sections
+
+- **Raman_molecule.py** : side module for (wavenumber,molecule) pair
+    - Load the molecular dictionary library
+    - Given wavenumber, return molecular name
+
+----
+### :art: Advanced Analysis
+- **Raman_cluster.py** : Intra-strain clustering modules for SCRS
+    - Pick clustering algorithm using various metrics based on hard voting
+    - Visualize strains w/ PCA biplot and related average, std, min, max spectra
+
+- **Raman_chmap.py** : Clustering heatmap for SCRS to show differences
+    - Clustering heatmaps for averaged Raman spectra given one baseline standard
+
+- **Raman_stat.py** : Statistical modules for SCRS 
+    - ANOSIM for comparison of inter-strain and intra-strain
+    - Tukey test for ML accuracy
+    - Jaccard and consistency computation
+    - [ ] Underdevelopment
+        - [ ] Chaos coefficients
+        - [ ] **Network Analysis from another separate self-developed repository**
+        - [ ] Correlation analysis for 2 trees
+
+- **Raman_tree.py** : Tree-based analysis modles
+    - Phenotyping tree establishment
+    - 16S tree establishment w/ same label color
+    - Mantel analysis for pairwise distance tree correlation
+
+- [ ] **Raman_Ranking.py** : Under development; used to conduct feature ranking for SCRS
+- [ ] **AI** : Under development; establish common FCNN, CNN, Transformer, Transformer variants for SCRS
+
+----
+### :books: Link to R markdown using specific eco-evolution R packages
+- **Raman_BlombergK.Rmd**
+    - To calculate Blomberg K statistics for the comparison of two trees (16S and phenotyping trees)
+- **Raman_BLT.Rmd**
+    - To perform branch length transformation using various methods, including delta, lambda, OU, rate change, two rate, and exponential rate transformations
+- **Test_Tree.Rmd**
+    - To test how the function of rescale of package geiger process the phylogenetic tree data by various branch length transformation methods
+
+----
+### :gift: Side Modules
+- **Raman_figmerge.py**: figure combination package
+    - Save figures
+    - Combine figures of intra-strain clustering based on different criterion 
+        - one strain under different growth stages; 
+        - one representative strain from each genus in stationary phase 1 with best accuracy; 
+        - all strains under Bacillus genus in stationary phase 1 with best accuracy
+
+- **Raman_color.py** : To align colors for above analysis
+    - Generate customized colors
+    - Generate label and color for microbial taxonomy by Raman analysis
+
+----
+### :crystal_ball: Examplary Workflow using the abovementioned modules
+
 <!---
 ----
 ## DATA
@@ -105,89 +194,3 @@ This section is to show some examples for the project results
 - pipeline.sh : bash script to perform my codes
 )
 --->
-
-----
-## :computer: Python Modules
-----
-### :old_key: :exclamation: Input Data Format
-Data is separated by ``` '\t' ``` with shape of ```n samples x d features```. The 1st row represents wavenumbers. 
-
-n samples should contain x background spectra in the end. or it can be merged from separate file.
-
-![Data](https://github.com/ZJLEOWANG3/RamanomeSpec/blob/b229a0899022aed7831da27871425b9af7df5e91/media/data.format.png)
-
-----
-### :beginner: Prepare your SCRS Data
-- **Load.py** : load all modules for other modules
-
-- **Raman_read.py** : read txt files to pandas.dataframe for downstream analysis
-
-- **Raman_preprocess.py** : Raman spectroscopy preprocessing module
-    - [x] Background subtraction
-    - [x] Baseline correction
-    - [x] Smooth
-    - **Optional**
-        - [ ] Binning: to align your data based on differnet stepsize
-        - [ ] Normalization: to normalize your data for later feature and AI relevant analysis
-
-----
-### :chart_with_upwards_trend: Get your peak & Assign its molecular
-- **Raman_find_polymer.py** : find peaks and polymers of interests
-    - :dart: **Targeted Analysis**
-        - find single polymer
-        - find multiple polymer
-    - :kite: **Non-Targeted Analysis**
-        - find all peaks
-        - [ ] Under-development analysis sections
-
-- **Raman_molecule.py** : side module for (wavenumber,molecule) pair
-    - Load the molecular dictionary library
-    - Given wavenumber, return molecular name
-
-----
-### :art: Advanced Analysis
-- **Raman_cluster.py** : Intra-strain clustering modules for SCRS
-    - Pick clustering algorithm using various metrics based on hard voting
-    - Visualize strains w/ PCA biplot and related average, std, min, max spectra
-
-- **Raman_chmap.py** : Clustering heatmap for SCRS to show differences
-    - Clustering heatmaps for averaged Raman spectra given one baseline standard
-
-- **Raman_stat.py** : Statistical modules for SCRS 
-    - ANOSIM for comparison of inter-strain and intra-strain
-    - Tukey test for ML accuracy
-    - Jaccard and consistency computation
-    - [ ] Underdevelopment
-        - [ ] Chaos coefficients
-        - [ ] **Network Analysis from another separate self-developed repository**
-        - [ ] Correlation analysis for 2 trees
-
-- **Raman_tree.py** : Tree-based analysis modles
-    - Phenotyping tree establishment
-    - 16S tree establishment w/ same label color
-    - Mantel analysis for pairwise distance tree correlation
-
-- [ ] **Raman_Ranking.py** : Under development; used to conduct feature ranking for SCRS
-- [ ] **AI** : Under development; establish common FCNN, CNN, Transformer, Transformer variants for SCRS
-
-----
-### :books: Link to R markdown using specific eco-evolution R packages
-- **Raman_BlombergK.Rmd**
-    - To calculate Blomberg K statistics for the comparison of two trees (16S and phenotyping trees)
-- **Raman_BLT.Rmd**
-    - To perform branch length transformation using various methods, including delta, lambda, OU, rate change, two rate, and exponential rate transformations
-- **Test_Tree.Rmd**
-    - To test how the function of rescale of package geiger process the phylogenetic tree data by various branch length transformation methods
-
-----
-### :gift: Side Modules
-- **Raman_figmerge.py**: figure combination package
-    - Save figures
-    - Combine figures of intra-strain clustering based on different criterion 
-        - one strain under different growth stages; 
-        - one representative strain from each genus in stationary phase 1 with best accuracy; 
-        - all strains under Bacillus genus in stationary phase 1 with best accuracy
-
-- **Raman_color.py** : To align colors for above analysis
-    - Generate customized colors
-    - Generate label and color for microbial taxonomy by Raman analysis
