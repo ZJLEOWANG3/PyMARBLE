@@ -1,20 +1,21 @@
-# (RamanomeSpec)
+# *RamanomeSpec*
 ----
-## Project Goal
-This project is focused on the development of analytics for SCRS platform
+## :eyes: Project Goal 
+This project is focused on the development of AI-powered automated analytics for single-cell Raman Spectroscopy (SCRS) platform
 
 ----
-## COPYING.txt
-The file contains GNU general public license for  permissions of this strong copyleft license
+## :exclamation: COPYING.txt
+The file contains GNU general public license for  permissions of this strong copyleft license. All rights reserved. No commerical-relevant distributions are allowed.
 
 ----
-## setup.py
+## :innocent: setup.py
 The setup.py file is the build script for the package. The setup function from setuptools will build the package for upload to PyPI. Setuptools includes info about the package, version numbber, and which other packages are required for users.
 
 ----
-## checkVersion.py
-The python file is to check the versions of all imported packages for the setup.py section
+## :baby: checkVersion.py
+To check the versions of all imported packages for the setup.py section
 
+<!---
 ----
 ## DATA
 - Processed : processed Raman datasets from raw datasets
@@ -25,8 +26,6 @@ The python file is to check the versions of all imported packages for the setup.
 - average_accuracy.zijian.json : ML training accuracy of selected model
 - 36-strain-changed2.nwk : 16S tree data for 36 strains
 - TEMP : save temporary data
-
-
 
 - OUTPUT : save important necessary datasets like the data in figures
     - row_colors.npy : numpy file for row_colors to visualize heatmap
@@ -104,12 +103,12 @@ This section is to show some examples for the project results
 - consistency.py : to compute the consistency of two algorithms
 - PCA_EVR.py : to compute the PCA components impacts on consistency or Jaccard
 - pipeline.sh : bash script to perform my codes
-
+)
+--->
 ----
-## Purpose of each script (Python)
-This section introduced the purpose of each script and their related input & output; If works, what results does it show; If not, how to improve it?
+## Python Modules
 
-- Raman package loading (load.py)
+- :grinning: Raman package loading (load.py)
     - load all package for other packages
 
 - Raman read package (Raman\_read.py)
