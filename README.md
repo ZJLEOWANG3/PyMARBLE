@@ -112,6 +112,7 @@ This section is to show some examples for the project results
 ### :old_key: :exclamation: Input Data Format
 Data is separated by '\t' with shape of n samples x d features
 The 1st row represents wavenumbers
+![Data](https://github.com/ZJLEOWANG3/RamanomeSpec/blob/b229a0899022aed7831da27871425b9af7df5e91/media/data.format.png)
 
 ----
 ### :beginner: Prepare your SCRS Data
