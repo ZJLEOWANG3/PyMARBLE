@@ -106,28 +106,37 @@ This section is to show some examples for the project results
 )
 --->
 ----
-## Python Modules
+## :computer: Python Modules
 
-- :grinning: Raman package loading (load.py)
-    - load all package for other packages
+----
+### :beginner: Prepare your Raman data
+- load.py
+    - load all modules for other packages
 
-- Raman read package (Raman\_read.py)
+- Raman_read.py
     - read txt files to dataframe for downstream analysis
 
-- Raman spectroscopy preprocessing package (Raman\_preprocess.py)
-    - Background subtraction
-    - Smooth
-    - Baseline correction
-    - binning
-    - normalization
+- Raman_preprocess.py
+    - Raman spectroscopy preprocessing package
+        - Background subtraction
+        - Smooth
+        - Baseline correction
+        - binning
+        - normalization
 
-- Raman polymer identification package (Raman\_find\_polymer.py)
+----
+### :chart_with_upwards_trend: Get your peak & Assign its molecular
+- Raman molecular library package (Raman\_molecule.py)
+    - Load the molecular dictionary library
+    - Given wavenumber, return molecular name
+
+- Raman_find_polymer.py
+    - Raman polymer identification package 
     - find single polymer
     - find multiple polymer
 
-- Raman color label generator package (Raman\_color.py)
-    - Generate customized colors
-    - Generate label and color for microbial taxonomy by Raman analysis
+----
+### :art: Advanced analysis
 
 - Raman intra-strain clustering package (Raman\_cluster.py)
     - Pick clustering algorithm using various metrics based on hard voting
@@ -153,11 +162,12 @@ This section is to show some examples for the project results
     - 16S tree establishment w/ same label color
     - Mantel analysis for pairwise distance tree correlation
 
-- Raman molecular library package (Raman\_molecule.py)
-    - Load the molecular dictionary library
-    - Given wavenumber, return molecular name
+- Raman_color.py
+    - Generate customized colors
+    - Generate label and color for microbial taxonomy by Raman analysis
 
 ----
+### :side Advanced analysis
 Purpose of scripts using R markdown
 - Raman\_BlombergK.Rmd 
     - To calculate Blomberg K statistics for the comparison of two trees (16S and phenotyping trees)
