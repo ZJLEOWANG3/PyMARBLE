@@ -1,18 +1,18 @@
 # *RamanomeSpec*
 ----
 ## :eyes: Project Goal 
-This project is focused on the development of AI-powered automated analytics for single-cell Raman Spectroscopy (SCRS) platform
+This project is focused on the development of AI-powered automated analytics for **single-cell Raman Spectroscopy (SCRS)** platform
 
 ----
 ## :exclamation: COPYING.txt
 The file contains GNU general public license for  permissions of this strong copyleft license. All rights reserved. No commerical-relevant distributions are allowed.
 
 ----
-## :innocent: setup.py
+## :innocent: Setup.py
 The setup.py file is the build script for the package. The setup function from setuptools will build the package for upload to PyPI. Setuptools includes info about the package, version numbber, and which other packages are required for users.
 
 ----
-## :baby: checkVersion.py
+## :baby: CheckVersion.py
 To check the versions of all imported packages for the setup.py section
 
 <!---
@@ -110,7 +110,7 @@ This section is to show some examples for the project results
 ## :computer: Python Modules
 
 ----
-### :beginner: Prepare your Raman data
+### :beginner: Prepare your SCRS Data
 - **Load.py** : load all modules for other modules
 
 - **Raman_read.py** : read txt files to pandas.dataframe for downstream analysis
