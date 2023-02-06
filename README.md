@@ -152,7 +152,7 @@ This section is to show some examples for the project results
     - Jaccard and consistency computation
     - [ ] Underdevelopment
         - [ ] Chaos coefficients
-        - [ ] Network Analysis from another separate self-developed repository
+        - [ ] **Network Analysis from another separate self-developed repository**
         - [ ] Correlation analysis for 2 trees
 
 - **Raman_tree.py** : Tree-based analysis modles
@@ -161,6 +161,7 @@ This section is to show some examples for the project results
     - Mantel analysis for pairwise distance tree correlation
 
 - [ ] **Raman_Ranking.py** : Under development; used to conduct feature ranking for SCRS
+- [ ] **AI** : Under development; establish common FCNN, CNN, Transformer, Transformer variants for SCRS
 ----
 ### :books: Link to other softwares
 Purpose of scripts using R markdown
