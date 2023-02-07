@@ -17,16 +17,16 @@ def find_peak(X,Y,w=(1150,1200),wid=np.arange(1,30)):
     if not isinstance(Y,pd.DataFrame):
         raise TypeError("This spectra is not pd.DataFrame, please transform Series to DataFrame")
     n, d = Y.shape
-    Xid = [] # selected i-th samples 
+    Xid = [] # selected i-th samples containing peaks within window w
     Xpeak = [] # selected peak wavenumber
     Ypeak = [] # selected peak intensity
     for i in range(n):
         Yi = Y.iloc[i,:] # i-th sample, all intensity Y
         peakind = scipy.signal.find_peaks_cwt(Yi, widths=wid)# peak id
-        Xi = X[peakind] # selected peak X
+        Xi = X[peakind] # found peak wavenumbers
         Yi = Yi[peakind] # selected intensity Y
         id2 = np.logical_and(Xi>w[0],Xi<w[1]) # selected peak id for the targeted molecules
-        if id2.any():
+        if id2.any(): # found molecule
             peakid = peakind[id2]
             ypeak = Yi[peakid].tolist()[0]
             if ypeak>0.5:
@@ -35,8 +35,74 @@ def find_peak(X,Y,w=(1150,1200),wid=np.arange(1,30)):
                 Xid.append(i)
     Y2 = Y.iloc[Xid,:]
     Y2.columns = X.to_numpy().tolist()
-    return Xid, Y2.T, peakind# Y2 :: n x d
+    # return Xid : the row number for samples who contains the peak within w
+    # return Y2 : bacteria contains the peak
+    # return Y3 : bacteria not contains the peak
+    return Xid, Y2.T # Y2 :: n x d
 
+def get_all_peak(X,Y,window=5,wid=np.arange(1,30),mol_dict=None):
+    """
+    n x d
+    get all the peaks and identified molecules
+    
+    """
+    if not isinstance(Y,pd.DataFrame):
+        raise TypeError("This spectra is not pd.DataFrame, please transform Series to DataFrame")
+    
+    # load dict
+    if mol_dict==None:
+            mol_file = '/Users/zijianleowang/Desktop/Projects_in_Cornell/Raman Library/RamanSpec/DATA/molecule_dict.json'
+    elif isinstance(mol_dict,str):
+        mol_file = mol_dict
+    elif isinstance(mol_dict,dict):
+        molecule_dict = mol_dict
+    # get peak
+    n, d = Y.shape
+    peak,mol = [], []
+    nphenotype = 3 # count 3 types of phenotypes here, PAO, GAO, PHAAO
+    phenotypename = ['PAO','GAO','PHAAO']
+    phenotype = pd.DataFrame(np.zeros([n,nphenotype]),columns=phenotypename)
+    for i in range(n): # for each single cell within this dataset such as drop
+        Yi = Y.iloc[i,:]
+        peakind = scipy.signal.find_peaks_cwt(Yi, widths=wid)# peak id
+        Xi = X[peakind] # found peak wavenumbers
+        Yi = Yi[peakind] # selected intensity Y
+
+        #################
+        # get molecule name
+        moli = {}
+        for polymer,wn in molecule_dict.items():
+            tempbool = Xi.between(wn - window,wn + window) # whether it contains a certain molecule
+            if tempbool.any():
+                moli[polymer] = Yi[tempbool.tolist()].values[0]
+        mol.append(moli)
+
+        # phenotypes determine
+        keysi = moli.keys()
+        if 'glycogen' in keysi:
+            phenotype['GAO'][i] += 1
+        if 'polyP' in keysi and 'O-P-O' in keysi:
+            phenotype['PAO'][i] += 1
+        if 'PHB-co-PHV' in keysi or 'PHB' in keysi:
+            phenotype['PHAAO'][i] += 1
+        ##############
+
+        peaki = pd.concat([Xi,Yi],axis=1)
+        peaki.columns = ['peakwn','peakint'] # peak wavenumber, peak intensity
+        peak.append(peaki)
+
+    peak, mol = pd.DataFrame(peak),pd.DataFrame(mol)
+    peak = peak.fillna(0)
+    mol = mol.fillna(0)
+
+    peak.index = Y.index
+    mol.index = Y.index
+    phenotype.index = Y.index
+
+    return peak, mol, phenotype
+
+# def get_identity():
+#     # Given 
 
 def find_single_polymer(X, Y, w, size=5):
         """

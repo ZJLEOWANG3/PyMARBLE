@@ -7,20 +7,53 @@
 ##############################################
 from load import *
 
-def remove_burnt(X,Y0):
+def std_wf(X,Y,Y_BG):
+    """
+    standard preprocessing workflow
+    X : wavenumber
+    Y : n x d, intensity
+    Y_BG : n x d, intensity for background spectra
+    """
+    totaln, d = Y.shape
+    Y, Xid = remove_burnt(X,Y.T) # Xid :: removed particle index
+    cells = Y.T # spec for cells, Y : d x n
+    with open('/Users/zijianleowang/Desktop/Projects_in_Cornell/Raman Library/RamanSpec/DATA/molecule_dict.json','r') as f:
+        molecule_dict = json.load(f)
+    if Y.shape[1] != 0: # this means there is non-burnt cell
+        # clean data
+        d, celln = Y.shape
+        Y = Raman_preprocess.smooth(Y)
+        Y = Raman_preprocess.bg_subtraction(Y,Y_BG.T)
+        Y = Raman_preprocess.baseline(Y)
+        peaks,mol,phenotype = Raman_find_polymer.get_all_peak(X,Y.T,mol_dict=molecule_dict)
+        
+        basic_stat = Raman_stat.get_stat(totaln, celln, phenotype) # percentage of cell recovery, PAO, GAO, PHAAO
+        # who are the PAO, GAO, PHAAO?
+        PAO = Y.T.loc[phenotype['PAO']==1,:] # Y : d x n
+        GAO = Y.T.loc[phenotype['GAO']==1,:]
+        PHAAO = Y.T.loc[phenotype['PHAAO']==1,:]
+        phenotype_spec = [X,cells,PAO,GAO,PHAAO]
+    else:
+        phenotype_spec = [X,None,None,None,None]
+        print("All cell burnt")
+    return Y,peaks,mol, basic_stat, phenotype_spec
+
+
+def remove_burnt(X,Y0,threshold=4000):
     """
     find the burnt cells in Raman with raw data X and Y0
+    threshold :: the highest intensity value accepted
     Y0 :: d x n
     burnt cell marker peak: 1496-"1589"-1698; 1285-"1361"-1430
     """
     Xid1, _ = Raman_find_polymer.find_peak(X,Y0.T,(1560,1610))
     Xid2, _ = Raman_find_polymer.find_peak(X,Y0.T,(1330,1390))
-    Xid = np.intersect1d(Xid1,Xid2)
+    Xid = np.intersect1d(Xid1,Xid2) # contains both of the peaks
     Y2 = Y0.copy()
     Y2.columns = np.arange(Y2.shape[1])
     Y2.drop(Xid,axis=1,inplace=True)
 
-    Y2 = Y2[Y2<4000]    #remove super high intensity
+    Y2 = Y2[Y2<threshold]    #remove super high intensity
     Y2.dropna(axis=1,how='any',inplace=True)
     #Y2.columns = np.arange(Y2.shape[1])
     return Y2,Xid # dxn

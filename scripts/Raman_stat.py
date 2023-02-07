@@ -10,6 +10,15 @@ from load import *
 # boxplot_tukey(acc,(0.96,1.03),title='classification',label='accuracy') as an example
 # acc is a dataframe (m x n) : m denotes samples of each n
 #############################################
+def get_stat(totaln, celln, phenotype):
+    """
+    Get basic statistics like cell recovery %, PAO%, GAO%, PHAAO%
+    """
+    recovery = celln/totaln * 100
+    phenotypestat = phenotype.sum(axis=0)/celln * 100
+    v = [celln, recovery] + phenotypestat.values.tolist()
+    basic_stat = pd.Series(v,index = ['cell number','cell recovery','PAO','GAO','PHAAO'])
+    return basic_stat
 
 def boxplot(df,title,ylabel,figsize=(5,5)):
         fig = plt.figure(figsize=figsize)

@@ -25,7 +25,10 @@ def plot_line(X,Y,xlabel='Wavenumber (c$m^{-1}$)',\
     else:
         return ax
 
-def add_vline(ax,xvalues,ylim,**kwargs):
+def add_title(ax,title,style):
+    ax.set_title(title+", n={}".format(Y.shape[1]))
+
+def add_vline(ax,xvalues:list,ylim,**kwargs):
     # add vertical lines to ax
     ymin, ymax = ylim
     if not isinstance(xvalues,list):
@@ -35,3 +38,20 @@ def add_vline(ax,xvalues,ylim,**kwargs):
                 **kwargs)
     return ax
 
+def draw_between(ax,X,Y,):
+    """
+    shape of Y : n x d
+    fill color between +- standard deviation
+    """
+    if ax==None:
+        ax0 = None
+        fig, ax = plt.subplots(1,1,figsize=(5,5))
+    mean = Y.mean(axis=0)
+    std = Y.std(axis=0)
+    ax.plot(X,mean,color='k',label=Y.index.values.tolist())
+    ax.fill_between(X,mean-std,mean+std,color='r',alpha=.3)
+    ax.legend()
+    if ax0 == None:
+        return ax, fig
+    else:
+        return ax
