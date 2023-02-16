@@ -40,11 +40,12 @@ def find_peak(X,Y,w=(1150,1200),wid=np.arange(1,30)):
     # return Y3 : bacteria not contains the peak
     return Xid, Y2.T # Y2 :: n x d
 
-def get_all_peak(X,Y,window=5,wid=np.arange(1,30),mol_dict=None):
+def get_all_peak(X,Y,window=5,
+                phenotypename = ['cell','PAO','GAO','PHBAO','PHBVAO'],
+                wid=np.arange(1,30),mol_dict=None):
     """
     n x d
     get all the peaks and identified molecules
-    
     """
     if not isinstance(Y,pd.DataFrame):
         raise TypeError("This spectra is not pd.DataFrame, please transform Series to DataFrame")
@@ -59,9 +60,9 @@ def get_all_peak(X,Y,window=5,wid=np.arange(1,30),mol_dict=None):
     # get peak
     n, d = Y.shape
     peak,mol = [], []
-    nphenotype = 3 # count 3 types of phenotypes here, PAO, GAO, PHAAO
-    phenotypename = ['PAO','GAO','PHAAO']
-    phenotype = pd.DataFrame(np.zeros([n,nphenotype]),columns=phenotypename)
+    
+    nphenotype = len(phenotypename) # count 3 types of phenotypes here, cell, PAO, GAO, PHAAO
+    phenotype = pd.DataFrame(np.zeros([n,nphenotype]),columns=phenotypename) # dataframe to save samples x phenotype
     for i in range(n): # for each single cell within this dataset such as drop
         Yi = Y.iloc[i,:]
         peakind = scipy.signal.find_peaks_cwt(Yi, widths=wid)# peak id
@@ -72,19 +73,31 @@ def get_all_peak(X,Y,window=5,wid=np.arange(1,30),mol_dict=None):
         # get molecule name
         moli = {}
         for polymer,wn in molecule_dict.items():
-            tempbool = Xi.between(wn - window,wn + window) # whether it contains a certain molecule
+            if isinstance(window,int):
+                tempbool = Xi.between(wn - window,wn + window) # whether it contains a certain molecule
+            elif isinstance(window,dict): # customize window for each polymer
+                tempbool = Xi.between(wn - window[polymer],wn + window[polymer]) # whether it contains a certain molecule
             if tempbool.any():
                 moli[polymer] = Yi[tempbool.tolist()].values[0]
         mol.append(moli)
 
         # phenotypes determine
         keysi = moli.keys()
+
+        # only if it contains DNA, it is denoted as cell
+        if "DNA/RNA,adenine" in keysi:
+            phenotype['cell'][i] += 1
+        
+        
+        
         if 'glycogen' in keysi:
             phenotype['GAO'][i] += 1
         if 'polyP' in keysi and 'O-P-O' in keysi:
             phenotype['PAO'][i] += 1
-        if 'PHB-co-PHV' in keysi or 'PHB' in keysi:
-            phenotype['PHAAO'][i] += 1
+        if 'PHB-co-PHV' in keysi:
+            phenotype['PHBVAO'][i] += 1
+        if 'PHB' in keysi:
+            phenotype['PHBAO'][i] += 1
         ##############
 
         peaki = pd.concat([Xi,Yi],axis=1)
@@ -99,7 +112,7 @@ def get_all_peak(X,Y,window=5,wid=np.arange(1,30),mol_dict=None):
     mol.index = Y.index
     phenotype.index = Y.index
 
-    return peak, mol, phenotype
+    return peak, mol, phenotype, phenotypename
 
 # def get_identity():
 #     # Given 

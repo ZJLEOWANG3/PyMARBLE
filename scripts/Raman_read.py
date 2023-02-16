@@ -48,17 +48,27 @@ def read_txt(path,typpe='point',BG=10,dataloop=3,metalevel=None,outdir=None):
             pathallout = [] # generate all output txt path
             metacol = [] # save all meta columns info for the txt such as [treatment conditions, time points, drop]
             for root, dirs, files in os.walk(path):
-                if root[len(path):].count(os.sep) < dataloop:
+                files = [f for f in files if not f[0] == '.']
+                dirs[:] = [d for d in dirs if not d[0] == '.']
+                
+                if root[len(path):].count(os.sep) < dataloop :
+                    
                     for f in files:
                         if not f.startswith("."):
                             temppath = os.path.join(root,f) # the abs path for the files in the given dataloop
-                            pathall.append(temppath)
                             
-                            pathallout.append(temppath.replace(path.split('/')[-1],outdir).replace(".txt",".xlsx"))
+                            pathall.append(temppath)
+                            original_dir_strcture = "/".join(temppath.split("/")[-dataloop:])
+                            pathouti = os.path.join(outdir,original_dir_strcture).replace(".txt",".xlsx")
+                            
+                            #filepath = temppath.replace(path,"").replace(".txt",".xlsx")[1:] # remove beginning with /
+                            #pathouti = os.path.join(path,outdir,filepath)
+                            pathallout.append(pathouti)
                             tempmetacol = temppath.split("/")[-dataloop:]
                             metacol.append(tempmetacol)
-
+            
             metacol = pd.DataFrame(metacol)
+            
             metacol.columns = metalevel
 
             pathall = pd.DataFrame(pathall)
@@ -90,25 +100,42 @@ def combine_sig_bg(ps:str,pb:str,pout:str)->pd.DataFrame:
     new.to_csv(pout,sep='\t',header=None,index=False)
     return new
 
-def Raman_save(path,data,tabname,typpe='list'):
+def Raman_save(path,data,tabname=None,typpe='list',filetype='xlsx'):
     """
     path is os.path.join(dir,filename)
     """
-
     dir = "/".join(path.split('/')[:-1])
     if not os.path.exists(dir):
         os.makedirs(dir)
 
-    if os.path.exists(path):
-        mode = 'a'
-    else:
-        mode = 'w'
-
-    with pd.ExcelWriter(path, mode=mode, engine="openpyxl") as writer:
+    if filetype=='xlsx':
+        if os.path.exists(path):
+            mode = 'a'
+            writer = pd.ExcelWriter(path, mode=mode, engine="openpyxl",if_sheet_exists='replace')
+        else:
+            mode = 'w'
+            writer = pd.ExcelWriter(path, mode=mode, engine="openpyxl")
+    elif filetype=='txt':
+        writer = path
         
-        if typpe=='list':
-            # to save a list of data
+    if typpe=='list':
+        # to save a list of data
+        if filetype=='xlsx':
             for df,tabnamei in zip(data,tabname):
                 df.to_excel(writer,sheet_name=tabnamei)
-        if typpe == 'single':
+    
+    if typpe=='series':
+        # to save a list of data
+        if filetype=='xlsx':
+            for tabnamei in data.index:
+                data[tabnamei].to_excel(writer,sheet_name=tabnamei)
+
+
+    if typpe == 'single':
+        if filetype=='xlsx':
             data.to_excel(writer,sheet_name=tabname)
+        elif filetype=='txt':
+            data.to_csv(path,sep='\t',index=False,header=False)
+    print("%s has been saved"%path)
+    if isinstance(writer,pd.ExcelWriter):
+        writer.close()

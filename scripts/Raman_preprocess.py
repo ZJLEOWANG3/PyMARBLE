@@ -7,7 +7,7 @@
 ##############################################
 from load import *
 
-def std_wf(X,Y,Y_BG):
+def std_wf(X,Y,Y_BG,peakwindow):
     """
     standard preprocessing workflow
     X : wavenumber
@@ -19,25 +19,30 @@ def std_wf(X,Y,Y_BG):
     cells = Y.T # spec for cells, Y : d x n
     with open('/Users/zijianleowang/Desktop/Projects_in_Cornell/Raman Library/RamanSpec/DATA/molecule_dict.json','r') as f:
         molecule_dict = json.load(f)
+    with open('/Users/zijianleowang/Desktop/Projects_in_Cornell/Raman Library/RamanSpec/DATA/molecule_win.json','r') as f:
+        molecule_wn = json.load(f)
     if Y.shape[1] != 0: # this means there is non-burnt cell
         # clean data
-        d, celln = Y.shape
         Y = Raman_preprocess.smooth(Y)
         Y = Raman_preprocess.bg_subtraction(Y,Y_BG.T)
-        Y = Raman_preprocess.baseline(Y)
-        peaks,mol,phenotype = Raman_find_polymer.get_all_peak(X,Y.T,mol_dict=molecule_dict)
-        
-        basic_stat = Raman_stat.get_stat(totaln, celln, phenotype) # percentage of cell recovery, PAO, GAO, PHAAO
-        # who are the PAO, GAO, PHAAO?
-        PAO = Y.T.loc[phenotype['PAO']==1,:] # Y : d x n
-        GAO = Y.T.loc[phenotype['GAO']==1,:]
-        PHAAO = Y.T.loc[phenotype['PHAAO']==1,:]
-        phenotype_spec = [X,cells,PAO,GAO,PHAAO]
+        Y = Raman_preprocess.baseline(Y) #d x n
+        peaks,mol,phenotype,phenotypename = Raman_find_polymer.get_all_peak(\
+            X,Y.T,mol_dict=molecule_dict,window=molecule_wn,wid=peakwindow
+            )# by default, the phenotypename is ['cell','PAO','GAO','PHBAO','PHBVAO']
+        # phenotype shape is : sample id x phenotypename
+        phenotype = phenotype.loc[phenotype['cell']==1,:] # get only cells
+        basic_stat = Raman_stat.get_stat(totaln, phenotype, phenotypename) # celln, percentage of cell recovery, PAO, GAO, PHAAO
+        cells = Y.loc[:,phenotype.index] # d x n
+        phenotype_spec = [X]
+        for i in phenotypename:
+            phenotype_spec.append(cells.loc[:,phenotype[i]==1].T)# save n x d
     else:
         phenotype_spec = [X,None,None,None,None]
         print("All cell burnt")
-    return Y,peaks,mol, basic_stat, phenotype_spec
 
+    # group phenotype_spec,["wavenumber"]+phenotypename
+    phenotype_spec = pd.Series(phenotype_spec,index=["wavenumber"]+phenotypename)
+    return Y,peaks,mol, basic_stat, phenotype_spec
 
 def remove_burnt(X,Y0,threshold=4000):
     """
