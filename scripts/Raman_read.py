@@ -46,6 +46,7 @@ def read_txt(path,typpe='point',BG=10,dataloop=3,metalevel=None,outdir=None):
             # walk through the directory to obtain the spectra list
             pathall = [] # save all targeted txt path
             pathallout = [] # generate all output txt path
+            pathopu = [] # save opu results
             metacol = [] # save all meta columns info for the txt such as [treatment conditions, time points, drop]
             for root, dirs, files in os.walk(path):
                 files = [f for f in files if not f[0] == '.']
@@ -54,18 +55,18 @@ def read_txt(path,typpe='point',BG=10,dataloop=3,metalevel=None,outdir=None):
                 if root[len(path):].count(os.sep) < dataloop :
                     
                     for f in files:
-                        if not f.startswith("."):
-                            temppath = os.path.join(root,f) # the abs path for the files in the given dataloop
-                            
-                            pathall.append(temppath)
-                            original_dir_strcture = "/".join(temppath.split("/")[-dataloop:])
-                            pathouti = os.path.join(outdir,original_dir_strcture).replace(".txt",".xlsx")
-                            
-                            #filepath = temppath.replace(path,"").replace(".txt",".xlsx")[1:] # remove beginning with /
-                            #pathouti = os.path.join(path,outdir,filepath)
-                            pathallout.append(pathouti)
-                            tempmetacol = temppath.split("/")[-dataloop:]
-                            metacol.append(tempmetacol)
+                        temppath = os.path.join(root,f) # the abs path for the files in the given dataloop
+                        pathall.append(temppath)
+                        original_dir_strcture = "/".join(temppath.split("/")[-dataloop:])
+
+                        pathouti = os.path.join(outdir,original_dir_strcture).replace(".txt",".xlsx")
+                        pathallout.append(pathouti)
+
+                        pathopui = os.path.join(outdir,"OPU",original_dir_strcture).replace(".txt",".xlsx")
+                        pathopu.append(pathopui)
+
+                        tempmetacol = temppath.split("/")[-dataloop:]
+                        metacol.append(tempmetacol)
             
             metacol = pd.DataFrame(metacol)
             
@@ -76,10 +77,11 @@ def read_txt(path,typpe='point',BG=10,dataloop=3,metalevel=None,outdir=None):
 
             pathallout = pd.DataFrame(pathallout)
             pathallout.columns = ['abspathout']
-            # generate output path
             
+            pathopu = pd.DataFrame(pathopu)
+            pathopu.columns = ['abspathopu']
             
-            df = pd.concat([pathall,pathallout,metacol],axis=1) #
+            df = pd.concat([pathall,pathallout,pathopu,metacol],axis=1) #
             return df
 
 def combine_sig_bg(ps:str,pb:str,pout:str)->pd.DataFrame:
@@ -105,8 +107,13 @@ def Raman_save(path,data,tabname=None,typpe='list',filetype='xlsx'):
     path is os.path.join(dir,filename)
     """
     dir = "/".join(path.split('/')[:-1])
+
     if not os.path.exists(dir):
         os.makedirs(dir)
+
+    if filetype=='image':
+        data.savefig(path,bbox_inches='tight')
+        return None
 
     if filetype=='xlsx':
         if os.path.exists(path):
@@ -135,7 +142,7 @@ def Raman_save(path,data,tabname=None,typpe='list',filetype='xlsx'):
         if filetype=='xlsx':
             data.to_excel(writer,sheet_name=tabname)
         elif filetype=='txt':
-            data.to_csv(path,sep='\t',index=False,header=False)
+            data.to_csv(path,sep='\t',index=False) # header is the wavenumber
     print("%s has been saved"%path)
     if isinstance(writer,pd.ExcelWriter):
         writer.close()

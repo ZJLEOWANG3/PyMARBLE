@@ -16,7 +16,7 @@ def std_wf(X,Y,Y_BG,peakwindow):
     """
     totaln, d = Y.shape
     Y, Xid = remove_burnt(X,Y.T) # Xid :: removed particle index
-    cells = Y.T # spec for cells, Y : d x n
+    
     with open('/Users/zijianleowang/Desktop/Projects_in_Cornell/Raman Library/RamanSpec/DATA/molecule_dict.json','r') as f:
         molecule_dict = json.load(f)
     with open('/Users/zijianleowang/Desktop/Projects_in_Cornell/Raman Library/RamanSpec/DATA/molecule_win.json','r') as f:
@@ -29,19 +29,21 @@ def std_wf(X,Y,Y_BG,peakwindow):
         peaks,mol,phenotype,phenotypename = Raman_find_polymer.get_all_peak(\
             X,Y.T,mol_dict=molecule_dict,window=molecule_wn,wid=peakwindow
             )# by default, the phenotypename is ['cell','PAO','GAO','PHBAO','PHBVAO']
-        # phenotype shape is : sample id x phenotypename
-        phenotype = phenotype.loc[phenotype['cell']==1,:] # get only cells
-        basic_stat = Raman_stat.get_stat(totaln, phenotype, phenotypename) # celln, percentage of cell recovery, PAO, GAO, PHAAO
-        cells = Y.loc[:,phenotype.index] # d x n
+        # phenotype shape is : n x phenotypename
+        
+        phenotypebool = phenotype.loc[phenotype['cell']==1,:] # get only cells
+        basic_stat = Raman_stat.get_stat(totaln, phenotypebool, phenotypename) # celln, percentage of cell recovery, PAO, GAO, PHAAO
+        
+        cellspec = Y.loc[:,phenotypebool.index] # d x n
         phenotype_spec = [X]
         for i in phenotypename:
-            phenotype_spec.append(cells.loc[:,phenotype[i]==1].T)# save n x d
+            phenotype_speci = cellspec.loc[:,phenotypebool[i]==1].T
+            phenotype_spec.append(phenotype_speci)# save n x d
+        phenotype_spec = pd.Series(phenotype_spec,index=["wavenumber"]+phenotypename)
     else:
-        phenotype_spec = [X,None,None,None,None]
+        phenotype_spec = None
         print("All cell burnt")
 
-    # group phenotype_spec,["wavenumber"]+phenotypename
-    phenotype_spec = pd.Series(phenotype_spec,index=["wavenumber"]+phenotypename)
     return Y,peaks,mol, basic_stat, phenotype_spec
 
 def remove_burnt(X,Y0,threshold=4000):

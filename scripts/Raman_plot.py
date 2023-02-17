@@ -55,3 +55,39 @@ def draw_between(ax,X,Y,):
         return ax, fig
     else:
         return ax
+
+def viz_summary(metalevel,summary,droplabel,**kwargs):
+    if "repetitive" in metalevel:
+        metalevel.remove("repetitive")
+    summary.drop(droplabel,axis=1,inplace=True)
+    obj = summary.groupby(by=metalevel)
+    mean = obj.mean()
+    std = obj.std()
+    fig,ax = plt.subplots(1,1,**kwargs)
+    mean.plot(kind='bar',yerr=std,ax=ax)
+    ax.legend()
+    plt.xticks(rotation=45,ha='right')
+    ax.set_ylabel("Recovery (%)")
+    return fig, ax
+
+def viz_phenotype(Y:pd.Series,figsize=(10,10)):
+    # Y is saves the phenotypes in index
+    # plot figure
+    fignum = Y.shape[0]
+    rownum = math.ceil(math.sqrt(fignum))
+    colnum = math.ceil(fignum/rownum)
+    fig,ax = plt.subplots(rownum,colnum,figsize=figsize)
+    figcount = 0
+    X = Y['wavenumber']
+    idx = Y.index.tolist()
+    idx.remove("wavenumber")
+
+    for i in idx:
+        axi = ax[figcount//colnum,figcount%colnum]
+        Y[i].columns = X
+        Y[i].T.plot(ax=axi,legend=None)
+        axi.set_title(i)
+        axi.set_xlabel(None)
+        figcount += 1
+    plt.close()
+    return fig,ax

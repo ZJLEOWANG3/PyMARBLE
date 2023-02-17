@@ -46,6 +46,7 @@ def get_all_peak(X,Y,window=5,
     """
     n x d
     get all the peaks and identified molecules
+    phenotype :: boolean matrix to mention who is the phenotype with col name in phenotypename
     """
     if not isinstance(Y,pd.DataFrame):
         raise TypeError("This spectra is not pd.DataFrame, please transform Series to DataFrame")
@@ -87,7 +88,6 @@ def get_all_peak(X,Y,window=5,
         # only if it contains DNA, it is denoted as cell
         if "DNA/RNA,adenine" in keysi:
             phenotype['cell'][i] += 1
-        
         
         
         if 'glycogen' in keysi:
