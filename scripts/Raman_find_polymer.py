@@ -53,7 +53,7 @@ def get_all_peak(X,Y,window=5,
     
     # load dict
     if mol_dict==None:
-            mol_file = '/Users/zijianleowang/Desktop/Projects_in_Cornell/Raman Library/RamanSpec/DATA/molecule_dict.json'
+            mol_file = '../data/molecule_dict.json'
     elif isinstance(mol_dict,str):
         mol_file = mol_dict
     elif isinstance(mol_dict,dict):

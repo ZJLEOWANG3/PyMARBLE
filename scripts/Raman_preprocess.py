@@ -17,9 +17,9 @@ def std_wf(X,Y,Y_BG,peakwindow):
     totaln, d = Y.shape
     Y, Xid = remove_burnt(X,Y.T) # Xid :: removed particle index
     
-    with open('/Users/zijianleowang/Desktop/Projects_in_Cornell/Raman Library/RamanSpec/DATA/molecule_dict.json','r') as f:
+    with open('../data/molecule_dict.json','r') as f:
         molecule_dict = json.load(f)
-    with open('/Users/zijianleowang/Desktop/Projects_in_Cornell/Raman Library/RamanSpec/DATA/molecule_win.json','r') as f:
+    with open('../data/molecule_win.json','r') as f:
         molecule_wn = json.load(f)
     if Y.shape[1] != 0: # this means there is non-burnt cell
         # clean data
