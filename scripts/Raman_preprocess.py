@@ -28,7 +28,7 @@ def std_wf(X,Y,Y_BG,peakwindow):
         Y = Raman_preprocess.baseline(Y) #d x n
         peaks,mol,phenotype,phenotypename = Raman_find_polymer.get_all_peak(\
             X,Y.T,mol_dict=molecule_dict,window=molecule_wn,wid=peakwindow
-            )# by default, the phenotypename is ['cell','PAO','GAO','PHBAO','PHBVAO']
+            )# by default, the phenotypename is ['cell','PAO','GAO1','GAO2','PHBAO','PHBVAO']
         # phenotype shape is : n x phenotypename
         
         phenotypebool = phenotype.loc[phenotype['cell']==1,:] # get only cells

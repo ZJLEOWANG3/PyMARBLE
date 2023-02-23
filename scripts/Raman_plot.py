@@ -86,7 +86,8 @@ def viz_phenotype(Y:pd.Series,figsize=(10,10)):
         axi = ax[figcount//colnum,figcount%colnum]
         Y[i].columns = X
         Y[i].T.plot(ax=axi,legend=None)
-        axi.set_title(i)
+        axi.set_title(i+", shape=%s"%(str(Y[i].shape))
+                      )
         axi.set_xlabel(None)
         figcount += 1
     plt.close()

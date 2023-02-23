@@ -25,6 +25,11 @@ def find_peak(X,Y,w=(1150,1200),wid=np.arange(1,30)):
         peakind = scipy.signal.find_peaks_cwt(Yi, widths=wid)# peak id
         Xi = X[peakind] # found peak wavenumbers
         Yi = Yi[peakind] # selected intensity Y
+        ii = Yi>0
+        if len(ii)==0:
+            continue
+        Xi = Xi[ii]
+        Yi = Yi[ii]
         id2 = np.logical_and(Xi>w[0],Xi<w[1]) # selected peak id for the targeted molecules
         if id2.any(): # found molecule
             peakid = peakind[id2]
@@ -69,7 +74,11 @@ def get_all_peak(X,Y,window=5,
         peakind = scipy.signal.find_peaks_cwt(Yi, widths=wid)# peak id
         Xi = X[peakind] # found peak wavenumbers
         Yi = Yi[peakind] # selected intensity Y
-
+        ii = Yi>0
+        if len(ii)==0:
+            continue
+        Xi = Xi[ii]
+        Yi = Yi[ii]
         #################
         # get molecule name
         moli = {}
@@ -91,7 +100,9 @@ def get_all_peak(X,Y,window=5,
         
         
         if 'glycogen' in keysi:
-            phenotype['GAO'][i] += 1
+            phenotype['GAO1'][i] += 1
+        if 'glycogen' in keysi and not ('polyP' in keysi and 'O-P-O' in keysi):
+            phenotype['GAO2'][i] += 1
         if 'polyP' in keysi and 'O-P-O' in keysi:
             phenotype['PAO'][i] += 1
         if 'PHB-co-PHV' in keysi:
