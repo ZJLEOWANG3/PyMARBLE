@@ -63,6 +63,7 @@ def viz_summary(metalevel,summary,droplabel,**kwargs):
     obj = summary.groupby(by=metalevel)
     mean = obj.mean()
     std = obj.std()
+	std[np.isnan(std)] = 0.0 # solves issue in line#68 where std is NaN
     fig,ax = plt.subplots(1,1,**kwargs)
     mean.plot(kind='bar',yerr=std,ax=ax)
     ax.legend()
