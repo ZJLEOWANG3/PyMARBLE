@@ -43,6 +43,7 @@ import skbio
 import time
 from Bio import Phylo
 import json
+import plotly.graph_objects as go
 import textwrap
 from matplotlib import colors, rc
 from sklearn.utils.extmath import fast_logdet, randomized_svd, svd_flip

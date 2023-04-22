@@ -17,24 +17,30 @@ def std_wf(X,Y,Y_BG,peakwindow):
     totaln, d = Y.shape
     Y, Xid = remove_burnt(X,Y.T) # Xid :: removed particle index
     
-    with open('../data/molecule_dict.json','r') as f:
+    with open(os.path.join(".",'../data/molecule_dict.json'),'r') as f:
         molecule_dict = json.load(f)
-    with open('../data/molecule_win.json','r') as f:
+    with open(os.path.join(".",'../data/molecule_win.json'),'r') as f:
         molecule_wn = json.load(f)
     if Y.shape[1] != 0: # this means there is non-burnt cell
         # clean data
-        Y = Raman_preprocess.smooth(Y)
-        Y = Raman_preprocess.bg_subtraction(Y,Y_BG.T)
-        Y = Raman_preprocess.baseline(Y) #d x n
+        Y = smooth(Y)
+        Y = bg_subtraction(Y,Y_BG.T)
+        Y = baseline(Y) #d x n
         peaks,mol,phenotype,phenotypename = Raman_find_polymer.get_all_peak(\
-            X,Y.T,mol_dict=molecule_dict,window=molecule_wn,wid=peakwindow
-            )# by default, the phenotypename is ['cell','PAO','GAO1','GAO2','PHBAO','PHBVAO']
+            X,Y.T,mol_dict=molecule_dict,window=molecule_wn,wid=peakwindow)
         # phenotype shape is : n x phenotypename
         
+        # get the stat and save it
         phenotypebool = phenotype.loc[phenotype['cell']==1,:] # get only cells
-        basic_stat = Raman_stat.get_stat(totaln, phenotypebool, phenotypename) # celln, percentage of cell recovery, PAO, GAO, PHAAO
-        
         cellspec = Y.loc[:,phenotypebool.index] # d x n
+        kl = Raman_stat.comp_KL(cellspec) # chaos by KL divergence
+        wd = Raman_stat.comp_WD(cellspec) # chaos by Wasserstein distance
+        
+        # celln, percentage of cell recovery, PAO, GAO, PHAAO
+        basic_stat = Raman_stat.get_stat(totaln, phenotypebool, phenotypename) 
+        basic_stat = pd.concat([basic_stat,pd.Series([kl,wd],index=["KL chaos","Wasserstain distance"])])
+        
+        # save them
         phenotype_spec = [X]
         for i in phenotypename:
             phenotype_speci = cellspec.loc[:,phenotypebool[i]==1].T
@@ -246,12 +252,13 @@ def augmentcombo(X:np.ndarray,Y:np.ndarray,ratio:np.ndarray,v:int,s=1):
 
 def binning(df1,df2):
         """
-        input shape: features x samples
+        input shape df1 and df2 : d x n
         This is used to align different spectra with various step size of wavelength from shared start and stop
         key idea is to: use df1 as the reference, df2 will be binned into that size as best;
         df1 - sample spectra; df2 - background spectra
         :return: pruned
         """
+        
         def bin(df, new_X):
             """
             X is the series to be modified; new_X is series as the reference for modification
@@ -303,7 +310,7 @@ def normalize(df,baseline_id=None,method='spectra'):
         """
         if method == 'L1':
             # normalize based on L1
-            df = df.div(df.sum(axis=1),axis=0)
+            df = df.div(df.sum(axis=1),axis=0) # n x d
             return df
         if method == "L2":
             df2 = df.applymap(lambda x: x**2)

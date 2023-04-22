@@ -53,20 +53,22 @@ def read_txt(path,typpe='point',BG=10,dataloop=3,metalevel=None,outdir=None):
                 dirs[:] = [d for d in dirs if not d[0] == '.']
                 
                 if root[len(path):].count(os.sep) < dataloop :
-                    
-                    for f in files:
-                        temppath = os.path.join(root,f) # the abs path for the files in the given dataloop
-                        pathall.append(temppath)
-                        original_dir_strcture = "/".join(temppath.split("/")[-dataloop:])
+                    if len(files) >= 1:
+                        for f in files:
+                            
+                            temppath = os.path.join(root,f) # the abs path for the files in the given dataloop
+                            
+                            pathall.append(temppath)
+                            original_dir_strcture = "/".join(temppath.split("/")[-dataloop:])
 
-                        pathouti = os.path.join(outdir,original_dir_strcture).replace(".txt",".xlsx")
-                        pathallout.append(pathouti)
+                            pathouti = os.path.join(outdir,original_dir_strcture).replace(".txt",".xlsx")
+                            pathallout.append(pathouti)
 
-                        pathopui = os.path.join(outdir,"OPU",original_dir_strcture).replace(".txt",".xlsx")
-                        pathopu.append(pathopui)
+                            pathopui = os.path.join(outdir,"OPU",original_dir_strcture).replace(".txt",".xlsx")
+                            pathopu.append(pathopui)
 
-                        tempmetacol = temppath.split("/")[-dataloop:]
-                        metacol.append(tempmetacol)
+                            tempmetacol = temppath.split("/")[-dataloop:]
+                            metacol.append(tempmetacol)
             
             metacol = pd.DataFrame(metacol)
             

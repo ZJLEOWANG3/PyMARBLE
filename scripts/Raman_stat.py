@@ -151,3 +151,33 @@ def jaccard(a,b):
 
 def consistency(a,b):
         return np.equal(a,b).sum()/a.shape[0]
+
+##################
+## Compute Chaos within each group
+##################
+def comp_KL(df):
+    # each 
+    d,n = df.shape
+    # normalize df
+    df = Raman_preprocess.normalize(df,method="L1")
+    comb = itertools.combinations(np.arange(n),2)
+    kl = []
+    for i,j in comb:
+        kli = scipy.special.kl_div(df.iloc[:,i].values,df.iloc[:,j].values)
+        kli = kli[np.isfinite(kli)]
+        kli = sum(kli)
+        kl.append(kli)
+    return sum(kl)/len(kl)
+
+def comp_WD(df):
+    # each 
+    d,n = df.shape
+    # normalize df
+    df = Raman_preprocess.normalize(df,method="L1")
+    comb = itertools.combinations(np.arange(n),2)
+    wd = []
+    for i,j in comb:
+        wdi = scipy.stats.wasserstein_distance(df.iloc[:,i].values, df.iloc[:,j].values)
+        if np.isfinite(wdi):
+            wd.append(wdi)
+    return sum(wd)/len(wd)

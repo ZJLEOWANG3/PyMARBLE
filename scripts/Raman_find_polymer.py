@@ -46,7 +46,7 @@ def find_peak(X,Y,w=(1150,1200),wid=np.arange(1,30)):
     return Xid, Y2.T # Y2 :: n x d
 
 def get_all_peak(X,Y,window=5,
-                phenotypename = ['cell','PAO','GAO','PHBAO','PHBVAO'],
+                phenotypename = ['cell','PCO','EBPRPAO','GAO1','GAO2','PHBAO','PHBVAO'],
                 wid=np.arange(1,30),mol_dict=None):
     """
     n x d
@@ -58,7 +58,7 @@ def get_all_peak(X,Y,window=5,
     
     # load dict
     if mol_dict==None:
-            mol_file = '../data/molecule_dict.json'
+            mol_file = os.path.join(",",'../data/molecule_dict.json')
     elif isinstance(mol_dict,str):
         mol_file = mol_dict
     elif isinstance(mol_dict,dict):
@@ -67,14 +67,14 @@ def get_all_peak(X,Y,window=5,
     n, d = Y.shape
     peak,mol = [], []
     
-    nphenotype = len(phenotypename) # count 3 types of phenotypes here, cell, PAO, GAO, PHAAO
+    nphenotype = len(phenotypename) # count n types of phenotypes
     phenotype = pd.DataFrame(np.zeros([n,nphenotype]),columns=phenotypename) # dataframe to save samples x phenotype
     for i in range(n): # for each single cell within this dataset such as drop
         Yi = Y.iloc[i,:]
         peakind = scipy.signal.find_peaks_cwt(Yi, widths=wid)# peak id
         Xi = X[peakind] # found peak wavenumbers
         Yi = Yi[peakind] # selected intensity Y
-        ii = Yi>0
+        ii = Yi>0 # intensity above 0 is required
         if len(ii)==0:
             continue
         Xi = Xi[ii]
@@ -91,20 +91,25 @@ def get_all_peak(X,Y,window=5,
                 moli[polymer] = Yi[tempbool.tolist()].values[0]
         mol.append(moli)
 
-        # phenotypes determine
+        ###### count the statistics
         keysi = moli.keys()
 
         # only if it contains DNA, it is denoted as cell
         if "DNA/RNA,adenine" in keysi:
             phenotype['cell'][i] += 1
         
-        
+        # GAO
         if 'glycogen' in keysi:
             phenotype['GAO1'][i] += 1
         if 'glycogen' in keysi and not ('polyP' in keysi and 'O-P-O' in keysi):
             phenotype['GAO2'][i] += 1
+        
+        # PAO
         if 'polyP' in keysi and 'O-P-O' in keysi:
-            phenotype['PAO'][i] += 1
+            phenotype['PCO'][i] += 1
+        if 'polyP' in keysi and 'O-P-O' in keysi and ('PHB-co-PHV' in keysi or 'PHB' in keysi):
+            phenotype['EBPRPAO'][i] += 1
+
         if 'PHB-co-PHV' in keysi:
             phenotype['PHBVAO'][i] += 1
         if 'PHB' in keysi:
@@ -125,8 +130,6 @@ def get_all_peak(X,Y,window=5,
 
     return peak, mol, phenotype, phenotypename
 
-# def get_identity():
-#     # Given 
 
 def find_single_polymer(X, Y, w, size=5):
         """
