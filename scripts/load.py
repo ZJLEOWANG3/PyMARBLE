@@ -65,8 +65,8 @@ from skbio.stats.distance import anosim
 from scipy.spatial.distance import pdist, squareform
 from skbio import DistanceMatrix
 import sys
-sys.path.append("/Users/zijianleowang/Desktop/Projects_in_Cornell/Raman Library/RamanSpec/CODE/scripts")
-import Raman_find_polymer, Raman_color, Raman_chmap, Raman_preprocess,Raman_cluster, Raman_figmerge, Raman_stat, Raman_tree
+sys.path.append("/Users/zijianleowang/Desktop/GitHub/RamanomeSpec/scripts")
+import Raman_find_polymer, Raman_color, Raman_chmap, Raman_preprocess,Raman_cluster, Raman_figmerge, Raman_stat, Raman_tree, Raman_plot
 import Raman_read
 import Raman_molecule 
 

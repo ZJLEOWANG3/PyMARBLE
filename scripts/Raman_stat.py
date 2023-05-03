@@ -4,6 +4,8 @@
 # different discussions
 #############################################
 from load import *
+sys.path.append("/Users/zijianleowang/Desktop/GitHub/RamanomeSpec/scripts")
+import Raman_preprocess
 
 #############################################
 # This script is to perform Tukey analysis for ML model data

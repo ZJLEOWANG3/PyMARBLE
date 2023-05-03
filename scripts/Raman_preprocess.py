@@ -6,6 +6,8 @@
 # required packages include pandas, scipy, 
 ##############################################
 from load import *
+sys.path.append("/Users/zijianleowang/Desktop/GitHub/RamanomeSpec/scripts")
+import Raman_stat
 
 def std_wf(X,Y,Y_BG,peakwindow):
     """

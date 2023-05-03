@@ -175,7 +175,10 @@ def meta_boxplot(metadf,by,fig_dict,method="ttest"):
                     tempi = groupi.iloc[:,i].dropna().values
                     tempj = groupi.iloc[:,j].dropna().values
                     if method=="ttest":
-                        t_stat, p_val = scipy.stats.ttest_rel(tempi,tempj )
+                        if len(tempi) == len(tempj):
+                            t_stat, p_val = scipy.stats.ttest_rel(tempi,tempj)
+                        else:
+                            t_stat, p_val = scipy.stats.ttest_ind(tempi, tempj, equal_var=False)
                     elif method=="tukey":
                         stati = scipy.stats.tukey_hsd(tempi,tempj)
                         t_stat = stati.statistic[0,1]

@@ -840,12 +840,15 @@ def pred_clf(Y,method,colors,ax,clist):
     elif method=="tsne":
         clf = TSNE(random_state=38,perplexity = min(30,Y.shape[0]-1))
         Y2 = clf.fit_transform(Y)
+    if type(ax) == NoneType:
+        fig, ax = plt.subplots(1,1,figsize=(5,5))
     ax.scatter(Y2[:,0],Y2[:,1],c=colors,edgecolors='k')
     
     # set legend
-    for c in np.unique(colors):
-        idx = np.argwhere(colors==c)[0]
-        ax.scatter(Y2[idx,0],Y2[idx,1],c=c, edgecolors='k', label = "cluster {}".format(clist.index(c)))
+    if type(colors) != NoneType:
+        for c in np.unique(colors):
+            idx = np.argwhere(colors==c)[0]
+            ax.scatter(Y2[idx,0],Y2[idx,1],c=c, edgecolors='k', label = "cluster {}".format(clist.index(c)))
     ax.legend()
     ax.set_xlabel("{} 1".format(method),fontsize='x-large')
     ax.set_ylabel("{} 2".format(method),fontsize='x-large')

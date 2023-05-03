@@ -104,7 +104,7 @@ def combine_sig_bg(ps:str,pb:str,pout:str)->pd.DataFrame:
     new.to_csv(pout,sep='\t',header=None,index=False)
     return new
 
-def Raman_save(path,data,tabname=None,typpe='list',filetype='xlsx'):
+def Raman_save(path,data,tabname=None,typpe='list',filetype='xlsx',verbose=True):
     """
     path is os.path.join(dir,filename)
     """
@@ -145,6 +145,7 @@ def Raman_save(path,data,tabname=None,typpe='list',filetype='xlsx'):
             data.to_excel(writer,sheet_name=tabname)
         elif filetype=='txt':
             data.to_csv(path,sep='\t',index=False) # header is the wavenumber
-    print("%s has been saved"%path)
+    if verbose==True:
+        print("%s has been saved"%path)
     if isinstance(writer,pd.ExcelWriter):
         writer.close()
