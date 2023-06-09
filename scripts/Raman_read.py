@@ -60,7 +60,7 @@ def read_txt(path,typpe='point',BG=10,dataloop=3,metalevel=None,outdir=None):
                             
                             pathall.append(temppath)
                             original_dir_strcture = "/".join(temppath.split("/")[-dataloop:])
-
+                            
                             pathouti = os.path.join(outdir,original_dir_strcture).replace(".txt",".xlsx")
                             pathallout.append(pathouti)
 

@@ -80,10 +80,19 @@ class create_tree:
 
 class read_tree:
 
-    def __init__(self,in_path,type=None,title=None,formatete3=1,format='newick',quoted_node_names=False):
+    def __init__(self,in_path,
+                 sep="_",
+                 special={},
+                 type=None,title=None,
+                 getdist=False,
+                 showleaf=False, formatete3=1,
+                 format='newick',quoted_node_names=False):
         """
         :param ts: tree style
                 in_path: path for newick file or newick string
+                special: dictionary[special node name] = new node name
+                sep: separator for node name in the tree, with the aim to rename node such as Methylobacer_NSM21 -> M. NSM21
+                getdist: bool whether to get a distance matrix or not
         """
         # circular
         # ts.mode = "c"
@@ -99,23 +108,34 @@ class read_tree:
         if title != None:
             self.title = title
 
-        tree_g = ete3.Tree(in_path,formatete3,quoted_node_names)  # the E coli name is not correct without underline
+        tree_g = ete3.Tree(in_path,
+                           format=formatete3,
+                           quoted_node_names=quoted_node_names)  # the E coli name is not correct without underline
         ts = ete3.TreeStyle()
         ts.mode = 'c'#circular
         ts.arc_span = 360
-        ts.show_leaf_name = True
-        ts.title.add_face(ete3.TextFace(self.title, fsize=20), column=0)  # add legend and title
+        ts.show_leaf_name = showleaf
+        leaf_count = len(tree_g.get_leaf_names())
+        self.leaf_count = leaf_count
+        
+        ts.title.add_face(ete3.TextFace("%s, n= %i"%(self.title,self.leaf_count),
+                                         fsize=20),
+                           column=1
+                           )  # add title
 
         self.ts = ts
         self.tree_g = tree_g
+        self.special = special
+        self.sep = sep
 
         #get distance matrix
-        tree_g2 = Bio.Phylo.read(in_path,format)#for the distance matrix calculation
-        self.tree_g2 = tree_g2
-        dm = self.get_distance_matrix()
-        normed_dm = Raman_preprocess.normalize(dm)
-        self.dm = dm
-        self.normed_dm = normed_dm# the normed one here is applied for Mantel test
+        if getdist==True:
+            tree_g2 = Bio.Phylo.read(in_path,format)#for the distance matrix calculation
+            self.tree_g2 = tree_g2
+            dm = self.get_distance_matrix()
+            normed_dm = Raman_preprocess.normalize(dm)
+            self.dm = dm
+            self.normed_dm = normed_dm# the normed one here is applied for Mantel test
 
     def get_distance_matrix(self):
         t = self.tree_g2
@@ -131,16 +151,24 @@ class read_tree:
         dm = pd.DataFrame(d).sort_index().sort_index(axis=1)
         return dm
 
-    def set_color_range(self, genus_to_color):
-        def get_node_color(tree_g, genus_to_color):
+    def set_color_range(self, genus_to_color,nametype="genus"):
+        def get_node_color(genus_to_color):
             """
             tree_g: ETE tree object
             genus_to_color: dictionary obtained by genus_to_color
+            nametype: string to show node is a genus or is a accession number; "genus" or "accession"
             """
+
+            # get the first element before _ to match the color in genus_to_color
             node_name = []
             node_color = []
             for node in self.tree_g.traverse("postorder"):
-                temp_key = node.name.replace(' ','_').split('_')[0]
+                # the genus name
+                if nametype=="genus":
+                    temp_key = node.name.replace(' ','_').split('_')[0]
+                elif nametype=="accession":
+                    temp_key = node.name
+
                 if len(temp_key) >= 1:  # in case the empty string
                     node_name.append(node.name)
                     try:
@@ -153,17 +181,42 @@ class read_tree:
                     node_color.append(temp_c)
             node_genus_color = dict(zip(node_name, node_color))
             return node_genus_color
-
-        node_genus_color = get_node_color(self.tree_g, genus_to_color)
+        
+        node_genus_color = get_node_color(genus_to_color)
         for genus, color in node_genus_color.items():
-            temp_g = self.tree_g & genus
+            if nametype=="genus":
+                temp_g = self.tree_g & genus # get the sub-node
+                genus = genus.replace("'","") # remove '
+            elif nametype=="accession":
+                # start with letter
+                if not ( (re.match(r'^\d', genus) is None) or genus=="bin_0" ):
+                    continue
+                else:
+                    temp_g = self.tree_g & genus
+
+            if nametype=="genus":
+                for spec_nn, spec_new in self.special.items(): 
+                    if spec_nn not in genus:
+                        nni = genus[0] + ". " + " ".join(genus.split(self.sep)[1:]) # i-th node name to shown in the tree plot
+                    else:
+                        nni = spec_new
+            elif nametype=="accession":
+                
+                nni = self.special[genus]
+                nni0 = nni[0]
+                nni1 = " ".join(nni.split(" ")[1:])
+                nni = nni0 + ". " + nni1
+                
+            temp_g.add_face(ete3.TextFace(nni, fsize=25),
+                           column=1) # because showleaf=False, here we can revise the new node name
             temp_g.img_style["bgcolor"] = color
+
         self.tree_g.set_style(ete3.NodeStyle())
         self.tree_g.img_style["bgcolor"] = "white"
         self.tree_g.img_style["size"] = 5
         self.tree_g.img_style["fgcolor"] = 'black'
 
-        return self.tree_g, self.ts
+        
 
 class analyze_tree:
     """
