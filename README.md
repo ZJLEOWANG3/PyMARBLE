@@ -1,4 +1,5 @@
 # *RamanomeSpec*
+!!! Under re-construction.
 ----
 ## :eyes: Project Goal 
 This project is focused on the development of AI-powered automated analytics for **single-cell Raman Spectroscopy (SCRS)** platform
